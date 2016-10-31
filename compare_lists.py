@@ -8,17 +8,15 @@ import argparse
 from measures.rankedlist import RBO, AverageOverlap
 
 def parse_args():
-    parser = argparse.ArgumentParser()
-
+    desc = ("Compare metagenome taxonomic abundance rankings "
+            "(expects lists in Kaiju report output format). "
+            "Fredrik Boulund 2016.")
+    parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("LIST1")
     parser.add_argument("LIST2")
-    parser.add_argument("-p", 
-            default=0.98,
-            type=float,
+    parser.add_argument("-p", default=0.98, type=float,
             help="p-value to use when comparing lists [%(default)s].")
-    parser.add_argument("-t", 
-            default=25,
-            type=int,
+    parser.add_argument("-t", default=25, type=int,
             help="Number of top list values to display alongside comparison [%(default)s].")
     
     if len(argv) < 2:
@@ -46,6 +44,7 @@ def main(list1, list2, p=0.98, t=10):
             print("{:>2} | {:<30} | {}".format(rank, *items))
     print("Average Overlap score (only {} first entries):  {}".format(t, AverageOverlap.score(list1, list2, t)))
     print("Rank Biased Overlap score (entire list):        {}".format(RBO.score(list1, list2, p)))
+    print("-"*20)
 
 
 if __name__ == "__main__":
@@ -54,4 +53,6 @@ if __name__ == "__main__":
     list1 = list(parse_list(options.LIST1))
     list2 = list(parse_list(options.LIST2))
 
+    print("Comparing '{}' with '{}'".format(options.LIST1, options.LIST2))
+    print("-"*20)
     main(list1, list2, options.p, options.t)
