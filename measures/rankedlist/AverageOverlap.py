@@ -55,7 +55,7 @@ def score(l1, l2, depth = 10):
 if __name__ == "__main__":
     list1 = ['a','b','c','d','e']
     list2 = ['b','a','c','d','e']
-    print score(list1,list2)
+    print(score(list1,list2))
 
     list2 = ['a','b','c','e','d']
-    print score(list1, list2)
+    print(score(list1, list2))

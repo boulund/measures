@@ -61,8 +61,8 @@ def score(l1, l2, p = 0.98):
 if __name__ == "__main__":
     list1 = ['0','1','2','3','4','5']
     list2 = ['1','0','2','3','4','5']
-    print RBO(list1,list2, p = 0.98)
+    print(RBO(list1,list2, p = 0.98))
 
     list1 = ['012']
     list2 = []
-    print RBO(list1, list2, p = 0.98)
+    print(RBO(list1, list2, p = 0.98))
