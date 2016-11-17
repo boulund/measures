@@ -39,9 +39,9 @@ def parse_list(fn):
 def main(list1, list2, p=0.98, t=10):
     for rank, items in enumerate(zip(list1[:t], list2[:t]), start=1):
         if items[0] == items[1]:
-            print("{:>2} | {:<30} | =".format(rank, items[0]))
+            print("{:>3} | {:<30} | =".format(rank, items[0]))
         else:
-            print("{:>2} | {:<30} | {}".format(rank, *items))
+            print("{:>3} | {:<30} | {}".format(rank, *items))
     print("Average Overlap score (only {} first entries):  {}".format(t, AverageOverlap.score(list1, list2, t)))
     print("Rank Biased Overlap score (entire list):        {}".format(RBO.score(list1, list2, p)))
     print("-"*20)
