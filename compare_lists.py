@@ -30,14 +30,47 @@ def parse_args():
     return parser.parse_args()
 
 
+def parse_metaphlan2(f):
+    for line in f:
+        lineage, proportion = line.strip().split("\t")
+        leaf = lineage.split("|")[-1]
+        if leaf.startswith("s__"):
+            yield leaf
+
+
+def parse_kaiju(f):
+    f.readline() # Skip second header line
+    for line in f:
+        if line.startswith("-"):
+            return
+        yield " ".join(line.split()[2:]).strip()
+
+
+def parse_centrifuge(f):
+    observed_species = []
+    for line in f:
+        (name, taxID, taxRank, genomeSize, numReads, 
+                numUniqueReads, abundance) = line.strip().split("\t")
+        if taxRank == "species":
+            observed_species.append((name, float(abundance)))
+    sorted_species = sorted(observed_species, key=lambda x: x[1], reverse=True)
+    return (s[0] for s in sorted_species)
+
+
 def parse_list(fn):
     with open(fn) as f:
-        f.readline() # Skip header lines
-        f.readline() # Skip header lines
-        for line in f:
-            if line.startswith("-"):
-                return
-            yield " ".join(line.split()[2:]).strip()
+        # Determine file type
+        firstline = f.readline()
+        if firstline.startswith("#SampleID"):
+            return list(parse_metaphlan2(f))
+        elif firstline.startswith("        %"):
+            return list(parse_kaiju(f))
+        elif firstline.startswith("name\ttaxID"):
+            return list(parse_centrifuge(f))
+        else:
+            print("Can't recognize filetype of", fn)
+            raise ValueError
+
 
 
 def main(list1, list2, p=0.98, t=10, rbo=False, ao=False):
@@ -60,8 +93,8 @@ def main(list1, list2, p=0.98, t=10, rbo=False, ao=False):
 if __name__ == "__main__":
 
     options = parse_args()
-    list1 = list(parse_list(options.LIST1))
-    list2 = list(parse_list(options.LIST2))
+    list1 = parse_list(options.LIST1)
+    list2 = parse_list(options.LIST2)
 
     if not any([options.rbo, options.ao]):
         print("Comparing '{}' with '{}'".format(options.LIST1, options.LIST2))
